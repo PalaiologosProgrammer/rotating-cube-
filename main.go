@@ -73,9 +73,9 @@ func abs(x int) int {
 }
 
 func main() {
+	var images []*image.Paletted
 	fgCol := color.RGBA{0xff, 0x00, 0xff, 0xff}
 	var palette = []color.Color{color.RGBA{0x00, 0x00, 0x00, 0xff}, fgCol}
-	var images []*image.Paletted
 	var delays []int
 
 	imgFile, err := os.Create(fileName)
@@ -83,4 +83,23 @@ func main() {
 		log.Fatal(err)
 	}
 	defer imgFile.Close()
+
+	rotateCube(math.Pi/4, math.Atan(math.Sqrt(2)))
+	var frame float64
+	for frame = 0; frame < 360; frame++ {
+		img := image.NewPaletted(image.Rect(0, 0, width, height), palette)
+		images = append(images, img)
+		delays = append(delays, 5)
+		for _, edge := range edges {
+			xy1 := nodes[edge[0]]
+			xy2 := nodes[edge[1]]
+			drawLine(int(xy1[0])+offset, int(xy1[1])+offset, int(xy2[0])+offset, int(xy2[1])+offset, img, fgCol)
+		}
+		rotateCube(math.Pi/180, 0)
+	}
+	if err := gif.EncodeAll(imgFile, &gif.GIF{Image: images, Delay: delays}); err != nil {
+		imgFile.Close()
+		log.Fatal(err)
+	}
+
 }
