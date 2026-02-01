@@ -15,6 +15,23 @@ const (
 	offset        = height / 2
 )
 
+func rotateCube(angleX, angleY float64) {
+	sinX := math.Sin(angleX)
+	cosX := math.Cos(angleX)
+	sinY := math.Sin(angleY)
+	cosY := math.Cos(angleY)
+	for _, node := range nodes {
+		x := node[0]
+		y := node[1]
+		z := node[2]
+		node[0] = x*cosX - z*sinX
+		node[2] = z*cosX + x*sinX
+		z = node[2]
+		node[1] = y*cosY - z*sinY
+		node[2] = z*cosY + y*sinY
+	}
+}
+
 var nodes = [][]float64{{-100, -100, -100}, {-100, -100, 100}, {-100, 100, -100}, {-100, 100, 100},
 	{100, -100, -100}, {100, -100, 100}, {100, 100, -100}, {100, 100, 100}}
 var edges = [][]int{{0, 1}, {1, 3}, {3, 2}, {2, 0}, {4, 5}, {5, 7}, {7, 6},
